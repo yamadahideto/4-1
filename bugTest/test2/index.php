@@ -1,22 +1,13 @@
 <?php
 require 'dbconnect.php';
-// require 'lib/password.php';
-// セッション開始
-// session_start();
+
 if(!isset($_SESSION)){
     session_start();
 }
-// include_once("dbInfo.php");
 
 // エラーメッセージ、登録完了メッセージの初期化
 $errorMessage = "";
 $signUpMessage = "";
-
-// セッション開始
-// session_start();
-if(!isset($_SESSION)){
-    session_start();
-}
 
 // ログインボタンが押された場合
 if (isset($_POST["signUp"])) {
@@ -40,7 +31,7 @@ if (isset($_POST["signUp"])) {
         try {
             $pdo = new PDO($dsn, $db['user'], $db['pass'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             $stmt = $pdo->prepare("INSERT INTO users(name, password) VALUES (:name, :password)");
-            $stmt->execute(array($username, password_hash($password, PASSWORD_DEFAULT)));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
+            $stmt->execute(array(":name" => $username, ":password" => password_hash($password, PASSWORD_DEFAULT)));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
             $userid = $pdo->lastinsertid();  // 登録した(DB側でauto_incrementした)IDを$useridに入れる
             $signUpMessage = '登録が完了しました。あなたの登録IDは ' . $userid . ' です。パスワードは ' . $password . ' です。';  // ログイン時に使用するIDとパスワード
         } catch (PDOException $e) {
